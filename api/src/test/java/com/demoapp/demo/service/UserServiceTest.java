@@ -1,36 +1,68 @@
 package com.demoapp.demo.service;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-class UserServiceTest {
+@SpringBootTest
+@ActiveProfiles("test")
+public class UserServiceTest {
 
-    private final UserService service = new UserService(null);
+    @Autowired
+    UserService userService;
 
     @Test
-    void deveAceitarSenhaQueAtendeAosCriterios() {
-        assertTrue(service.isPasswordValid("Senha@123"));
+    @DisplayName("Should validate correct email successfully")
+    void testIsEmailValidSucess() {
+        String email = "test@gmail.com";
+
+        boolean result = this.userService.isEmailValid(email);
+
+        assertThat(result).isTrue();
     }
 
     @Test
-    void deveRejeitarSenhaSemCaractereEspecial() {
-        assertFalse(service.isPasswordValid("Senha123"));
+    @DisplayName("Should validate incorrect email successfully")
+    void testIsEmailValidFailureCase1() {
+        String email = "incorrectemail.com";
+
+        boolean result = this.userService.isEmailValid(email);
+
+        assertThat(result).isFalse();
     }
 
     @Test
-    void deveRejeitarSenhaSemLetraMaiuscula() {
-        assertFalse(service.isPasswordValid("senha@123"));
+    @DisplayName("Should validate incorrect email successfully")
+    void testIsEmailValidFailureCase2() {
+        String email = "testgmail@.com";
+
+        boolean result = this.userService.isEmailValid(email);
+
+        assertThat(result).isFalse();
     }
 
     @Test
-    void deveAceitarEmailValido() {
-        assertTrue(service.isEmailValid("teste@email.com"));
+    @DisplayName("Should validate correct password successfully")
+    void testIsPasswordValidSuccess() {
+        String password = "ValidPassword123!";
+
+        boolean result = this.userService.isPasswordValid(password);
+
+        assertThat(result).isTrue();
     }
 
     @Test
-    void naoDeveAceitarEmailSemUsuarioEDominio() {
-        assertFalse(service.isEmailValid("@"));
+    @DisplayName("Should validate incorrect password successfully")
+    void testIsPasswordValidFailure() {
+        String password = "invalidpassword";
+
+        boolean result = this.userService.isPasswordValid(password);
+
+        assertThat(result).isFalse();
     }
+    
 }
