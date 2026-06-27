@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-let email = 'test4@gmail.com';
+let email = 'test34@gmail.com';
 let password = 'Test1234$%';
 
 test('register sucess test' , async ({ page }) => {

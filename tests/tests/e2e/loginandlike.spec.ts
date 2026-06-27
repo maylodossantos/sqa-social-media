@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-let email = 'msduarte@gmail.com';
-let password = 'Maylo123!@';
+let email = 'test34@gmail.com';
+let password = 'Test1234$%';
 
 test('successfully liked a post', async ({ page }) => {
   await page.goto('http://localhost:3000/');
