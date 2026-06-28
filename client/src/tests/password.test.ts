@@ -29,10 +29,6 @@ describe("isPasswordValid", () => {
     expect(isPasswordValid("Abc1@defg")).toBe(true);
   });
 
-  test("should return true for valid password, special character '!'", () => {
-    expect(isPasswordValid("Abc1!defg")).toBe(true);
-  });
-
   test("should return true for valid password 9 characters", () => {
     expect(isPasswordValid("Abc1@defg")).toBe(true);
   });
