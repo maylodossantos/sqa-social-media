@@ -56,10 +56,10 @@ jobs:
         run: |
           cd tests && npm install && npx playwright install --with-deps
           cd ../api && ./mvnw spring-boot:run > ../api.log 2>&1 &
-          cd ../client && npm start > ../client.log 2>&1 &
+          cd ../client && npm run dev > ../client.log 2>&1 &
           sleep 90
           cd ../tests && npx playwright test
-
+          
       - name: Show logs
         if: failure()
         run: |
