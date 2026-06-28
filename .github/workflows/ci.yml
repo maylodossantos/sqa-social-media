@@ -1,99 +1,64 @@
-name: Continuous Integration
+name: CI
 
 on:
   pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - synchronize
-      - reopened
+    branches: [main]
 
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
 
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: socialmedia
+          MYSQL_DATABASE: demo
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_USER: app
-          MYSQL_PASSWORD: app
         ports:
           - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost -proot"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=10
 
     steps:
-      - name: Checkout do projeto
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configurar Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: 21
           cache: maven
 
-      - name: Configurar Node.js
+      - name: Run JUnit tests
+        working-directory: api
+        run: ./mvnw clean test
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
-      - name: Dar permissão ao Maven Wrapper
-        run: chmod +x api/mvnw
-
-      - name: Compilar API
-        working-directory: api
-        run: ./mvnw clean compile
-
-      - name: Executar testes da API (JUnit)
-        working-directory: api
-        run: ./mvnw test
-
-      - name: Instalar dependências do Client
+      - name: Install frontend deps
         working-directory: client
         run: npm install
 
-      - name: Executar testes do Client (Jest)
+      - name: Run React tests
         working-directory: client
         run: npm test -- --watchAll=false
 
-      - name: Instalar dependências da raiz
-        run: npm install
-
-      - name: Instalar navegadores do Playwright
+      - name: Install Playwright
         run: npx playwright install --with-deps
 
-      - name: Iniciar API
+      - name: Start API
         working-directory: api
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/socialmedia
-          SPRING_DATASOURCE_USERNAME: app
-          SPRING_DATASOURCE_PASSWORD: app
-        run: |
-          ./mvnw spring-boot:run > api.log 2>&1 &
-          sleep 40
+        run: ./mvnw spring-boot:run > api.log 2>&1 &
 
-      - name: Iniciar Client
+      - name: Start Frontend
         working-directory: client
-        run: |
-          npm start > client.log 2>&1 &
-          sleep 30
+        run: npm start > client.log 2>&1 &
 
-      - name: Executar testes Playwright
+      - name: Wait for services
+        run: sleep 40
+
+      - name: Run Playwright tests
         run: npx playwright test
-
-      - name: Exibir logs da API
-        if: failure()
-        run: cat api/api.log
-
-      - name: Exibir logs do Client
-        if: failure()
-        run: cat client/client.log
