@@ -48,14 +48,20 @@ jobs:
           npm install
           npm test -- --watchAll=false
 
-      - name: Run Playwright tests
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/demo
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: root
-        run: |
-          cd tests && npm install && npx playwright install --with-deps
-          cd ../api && ./mvnw spring-boot:run > ../api.log 2>&1 &
-          cd ../client && npm start > ../client.log 2>&1 &
-          sleep 40
-          cd ../tests && npx playwright test
+    - name: Run Playwright tests
+      env:
+        SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/demo
+        SPRING_DATASOURCE_USERNAME: root
+        SPRING_DATASOURCE_PASSWORD: root
+      run: |
+        cd tests && npm install && npx playwright install --with-deps
+        cd ../api && ./mvnw spring-boot:run > ../api.log 2>&1 &
+        cd ../client && npm start > ../client.log 2>&1 &
+        sleep 90
+        cd ../tests && npx playwright test
+
+    - name: Show logs
+      if: failure()
+      run: |
+        echo "=== API ===" && cat api.log || true
+        echo "=== CLIENT ===" && cat client.log || true
