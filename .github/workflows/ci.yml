@@ -38,10 +38,6 @@ jobs:
 
       - name: Run JUnit tests
         working-directory: api
-        env:
-          SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/demo
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: root
         run: |
           chmod +x mvnw
           ./mvnw clean test
@@ -58,7 +54,6 @@ jobs:
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: root
         run: |
-          chmod +x api/mvnw
           npm install
           npx playwright install --with-deps
           api/mvnw spring-boot:run -f api/pom.xml > api.log 2>&1 &
