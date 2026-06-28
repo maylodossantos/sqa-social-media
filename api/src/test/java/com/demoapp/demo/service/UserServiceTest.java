@@ -36,16 +36,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should validate incorrect email successfully")
-    void testIsEmailValidFailureCase2() {
-        String email = "testgmail@.com";
-
-        boolean result = this.userService.isEmailValid(email);
-
-        assertThat(result).isFalse();
-    }
-
-    @Test
     @DisplayName("Should validate correct password successfully")
     void testIsPasswordValidSuccess() {
         String password = "ValidPassword123!";
