@@ -1,7 +1,14 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, request as pwRequest } from '@playwright/test';
 
-let email = 'test34@gmail.com';
-let password = 'Test1234$%';
+const email = 'test34@gmail.com';
+const password = 'Test1234$%';
+
+test.beforeAll(async () => {
+  const api = await pwRequest.newContext({ baseURL: 'http://localhost:8080' });
+  await api.post('/auth/signup', {
+    data: { email, password }
+  });
+});
 
 test('successfully liked a post', async ({ page }) => {
   await page.goto('http://localhost:3000/');
