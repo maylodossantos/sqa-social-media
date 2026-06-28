@@ -54,9 +54,8 @@ jobs:
           SPRING_DATASOURCE_USERNAME: root
           SPRING_DATASOURCE_PASSWORD: root
         run: |
-          npm install
-          npx playwright install --with-deps
-          api/mvnw spring-boot:run -f api/pom.xml > api.log 2>&1 &
-          cd client && npm start > ../client.log 2>&1 &
+          cd tests && npm install && npx playwright install --with-deps
+          cd ../api && ./mvnw spring-boot:run > ../api.log 2>&1 &
+          cd ../client && npm start > ../client.log 2>&1 &
           sleep 40
-          npx playwright test
+          cd ../tests && npx playwright test
